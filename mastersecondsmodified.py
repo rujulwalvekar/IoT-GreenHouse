@@ -34,7 +34,7 @@ def readTime():
 
 
 def CheckLightIntensity():
-    if gpio.input(18)==1 and 8 <= readTime().hour <= 19:#Assume 1 for no light
+    if gpio.input(18)==1 and 8 <= readTime().second <= 19:#Assume 1 for no light
             gpio.output(27,gpio.LOW)#Assume Low output leads to LED ON from relay
     else:
             gpio.output(27,gpio.HIGH)
@@ -64,22 +64,20 @@ if __name__ == '__main__':
 
     gpio.setup(18, gpio.IN)
     gpio.setup(27,gpio.OUT)
-    sleeper=False
+
     start=time.monotonic()
     while True:
-        if gpio.input(14)==0 and readTime().hour==16 :
+        if gpio.input(14)==0 and readTime().second==16 :
             print("1==Water")
             gpio.output(4,gpio.LOW)#Assume Low starts motor
                   
         elif gpio.input(14)==1:
             print("2==NoWater")
             gpio.output(4,gpio.High)
-            sleeper=True
         checkTemp()
-            #print (gpio.input(18),Time1.hour )
+            #print (gpio.input(18),Time1.second )
         CheckLightIntensity()
-        if (sleeper==True):
-            sleep(1800)
+        
 
 
 #            wateringPlants()
