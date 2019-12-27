@@ -4,11 +4,11 @@ import datetime
 import Adafruit_DHT
 
 #pin-10 : Humidity and Temp-Output
-#pin-11 : Humidity and Temp-Input
+#pin-24 : Humidity and Temp-Input
 #pin-14 : Moisture(Watering Plants input)
-#pin-10 Watering Plants output
-#pin-18
-#pin-28
+#pin-04 : Watering Plants output
+#pin-18 : LDR input
+#pin-27 : LED O/P
 #
 #
 
@@ -33,16 +33,12 @@ def readTime():
 Time1=readTime()
 
 
+def CheckLightIntensity():
+    if gpio.input(18)==1:
+            gpio.output(27,gpio.LOW)
+    else:
+            gpio.output(27,gpio.HIGH)
 
-def wateringPlants():
-    # read moisture
-    value = gpio.input(14)
-    if value == 1:
-        # turn pump on for some seconds
-        gpio.output(4, gpio.LOW)
-        time.sleep(5)
-        gpio.output(4, gpio.HIGH)
-        time.sleep(1)
 
 
 def water():
@@ -74,17 +70,17 @@ if __name__ == '__main__':
         val=int(time.monotonic()-start)
         if val%6==0 and  gpio.input(14)==1 :
             print("1==")
-            nowater()
+            gpio.output(4,gpio.HIGH)
+            checkTemp()
+            CheckLightIntensity()
+            
         elif val%6==1:
-            print("2")
-            water()
+            print("2==")
+            gpio.output(4,gpio.LOW)
             checkTemp()
             #print (gpio.input(18),Time1.hour )
 
-        if gpio.input(18)==1:
-            gpio.output(27,gpio.LOW)
-        else:
-            gpio.output(27,gpio.HIGH)
+        CheckLightIntensity()
 
 
 #            wateringPlants()
