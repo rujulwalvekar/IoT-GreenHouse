@@ -67,11 +67,11 @@ if __name__ == '__main__':
 
     start=time.monotonic()
     while True:
-        if gpio.input(14)==0 and readTime().second==16 :
+        if gpio.input(14)==1 and readTime().second>=16 :
             print("1==Water")
             gpio.output(4,gpio.LOW)#Assume Low starts motor
                   
-        elif gpio.input(14)==1:
+        elif gpio.input(14)==0:
             print("2==NoWater")
             gpio.output(4,gpio.High)
         checkTemp()
