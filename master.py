@@ -41,13 +41,6 @@ def CheckLightIntensity():
 
 
 
-def water():
-
-    gpio.output(4,gpio.LOW)
-
-def nowater():
-
-    gpio.output(4,gpio.HIGH)
 
 
 
@@ -80,7 +73,7 @@ if __name__ == '__main__':
             checkTemp()
             #print (gpio.input(18),Time1.hour )
 
-        CheckLightIntensity()
+            CheckLightIntensity()
 
 
 #            wateringPlants()
