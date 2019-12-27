@@ -11,14 +11,14 @@ import Adafruit_DHT
 #pin-27 : LED O/P
 #
 #
-
+#***********For event change .hour to .second everywhere***** Verify
 def checkTemp():
     # read remperature
     humidity, temperature = Adafruit_DHT.read_retry(11, 24)
     threshold = 20
 
     if temperature > threshold:
-        gpio.output(10, gpio.LOW)
+        gpio.output(10, gpio.LOW) #Start fan
     else:
         gpio.output(10, gpio.HIGH)
 
@@ -29,25 +29,32 @@ def readTime():
 
     except:
         # alternative: return the system-time:
-        return datetime.datetime.utcnow()
-Time1=readTime()
+        return datetime.datetime.now()
+
 
 
 def CheckLightIntensity():
-    if gpio.input(18)==1:
-            gpio.output(27,gpio.LOW)
+    if gpio.input(18)==1 and 8 <= readTime().hour <= 19:#Assume 1 for no light
+            gpio.output(27,gpio.LOW)#Assume Low output leads to LED ON from relay
     else:
             gpio.output(27,gpio.HIGH)
 
 
 
+def water():
+
+    gpio.output(4,gpio.LOW)
+
+def nowater():
+
+    gpio.output(4,gpio.HIGH)
 
 
 
 if __name__ == '__main__':
     #try:
     
-
+    Time1=readTime().hour
         
     gpio.setwarnings(False)
     gpio.setmode(gpio.BCM)
@@ -60,20 +67,17 @@ if __name__ == '__main__':
 
     start=time.monotonic()
     while True:
-        val=int(time.monotonic()-start)
-        if val%6==0 and  gpio.input(14)==1 :
-            print("1==")
-            gpio.output(4,gpio.HIGH)
-            checkTemp()
-            CheckLightIntensity()
-            
-        elif val%6==1:
-            print("2==")
+        if gpio.input(14)==0 and Time1.hour==16 :
+            print("1==Water")
+            gpio.output(4,gpio.LOW)#Assume Low starts motor
+                  
+        elif gpio.input(14)==1:
+            print("2==Water")
             gpio.output(4,gpio.LOW)
-            checkTemp()
+        checkTemp()
             #print (gpio.input(18),Time1.hour )
-
-            CheckLightIntensity()
+        CheckLightIntensity()
+        sleep(1800)
 
 
 #            wateringPlants()
