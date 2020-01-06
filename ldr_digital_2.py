@@ -15,10 +15,10 @@ def readTime():
 Time1=readTime()
 
 while True:
-	print gpio.input(18),Time1.hour 
+	print gpio.input(23),Time1.hour 
 
-	if gpio.input(18)==1:
-		gpio.output(27,gpio.LOW)
+	if gpio.input(23)==1:
+		gpio.output(22,gpio.LOW)
 	else:
-		gpio.output(27,gpio.HIGH)
+		gpio.output(22,gpio.HIGH)
 gpio.cleanup()

@@ -15,12 +15,25 @@ import Adafruit_DHT
 def checkTemp():
     # read remperature
     humidity, temperature = Adafruit_DHT.read_retry(11, 24)
-    threshold = 20
+    #threshold = 20
+    #handling first fan using dht reaing and threshold1
+    with open('threshold1.txt') as f1:
+        threshold1 = int(f1.read())
 
-    if temperature > threshold:
+    if temperature > threshold1:
         gpio.output(10, gpio.LOW) #Start fan
     else:
         gpio.output(10, gpio.HIGH)
+    #handling 2nd fan using same dht and threshold2
+    with open('threshold2.txt') as f2:
+        threshold2 = int(f2.read())
+
+    if temperature > threshold2:
+        gpio.output(9, gpio.LOW) #Start fan
+    else:
+        gpio.output(9, gpio.HIGH)
+    return humidity, temprature
+    
 
 def readTime():
     try:
@@ -38,6 +51,7 @@ def CheckLightIntensity():
             gpio.output(27,gpio.LOW)#Assume Low output leads to LED ON from relay
     else:
             gpio.output(27,gpio.HIGH)
+    return gpio.input(18)
 
 
 
@@ -67,6 +81,7 @@ if __name__ == '__main__':
     sleeper=False
     start=time.monotonic()
     while True:
+        sleeper = False
         if gpio.input(14)==1:# and readTime().hour>=16 :#Uncomment for setting motor to start on appropriate hour
             print("1==Water")
             gpio.output(4,gpio.LOW)#Assume Low starts motor
@@ -75,9 +90,18 @@ if __name__ == '__main__':
             print("2==NoWater")
             gpio.output(4,gpio.High)
             sleeper=True
-        checkTemp()
+        humidity, temprature = checkTemp()
             #print (gpio.input(18),Time1.hour )
-        CheckLightIntensity()
+        light_intensity = CheckLightIntensity()
+
+        #thngspeak ka part
+        URL='https://api.thingspeak.com/update?api_key='
+        Key= '6W55QAZI181K4HRN'
+        HEADER='&field1={}&field2={}&field3={}&field4={}'.format(temprature,humidity,gpio.input(14),light_intensity)
+        NEW_URL=URL+Key+HEADER
+        data=urllib.request.urlopen(NEW_URL)
+        print(data)
+        
         if (sleeper==True):
             #time.sleep(1800)
 	    time.sleep(10)
