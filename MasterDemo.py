@@ -67,7 +67,7 @@ if __name__ == '__main__':
     sleeper=False
     start=time.monotonic()
     while True:
-        if gpio.input(14)==1 and readTime().hour>=16 :
+        if gpio.input(14)==1:# and readTime().hour>=16 :#Uncomment for setting motor to start on appropriate hour
             print("1==Water")
             gpio.output(4,gpio.LOW)#Assume Low starts motor
                   
@@ -79,10 +79,8 @@ if __name__ == '__main__':
             #print (gpio.input(18),Time1.hour )
         CheckLightIntensity()
         if (sleeper==True):
-            time.sleep(1800)
+            #time.sleep(1800)
+	    time.sleep(10)
 
-
-#            wateringPlants()
-#            time.sleep(1)
    # except:
     #    gpio.cleanup()
